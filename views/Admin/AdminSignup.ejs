@@ -1,0 +1,32 @@
+<%- include("../partials/header")%>
+
+    <head>
+        <link rel="stylesheet" href="/public/CSS/Forms.css" type="text/css">
+    </head>
+    <div class="container">
+        <div class="global-container">
+            <div class="card login-form">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Admin sign up</h3>
+                    <div class="card-text">
+                        <form action="/admin/signup" method="POST">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Admin Name</label>
+                                <input class="form-control form-control-sm" type="text" name="AdminName" placeholder="AdminName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email</label>
+                                <input class="form-control form-control-sm" type="email" name="AdminEmail" placeholder="AdminEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input class="form-control form-control-sm" type="password" name="password" placeholder="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Sign up!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%-include("../partials/footer")%>

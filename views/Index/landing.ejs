@@ -1,0 +1,148 @@
+<%-include("../partials/header")-%>
+
+    <head>
+        <link rel="stylesheet" href="/public/CSS/landing.css" type="text/css">
+    </head>
+    <div class="container">
+        <div class="Landing">
+            <div class="Menu">
+                <ul class="nav nav-tabs">
+                    <% if (showingLatest) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/" style="color: orangered;">Trending <i class="fa fa-fire"
+                                aria-hidden="true" style="color: orangered;"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/latest">Latest</a>
+                        </li>
+                        <%}else{%>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/" style="color: orangered;">Trending <i class="fa fa-fire"
+                                aria-hidden="true" style="color: orangered;"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/latest">Latest</a>
+                            </li>
+                            <%}%>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/uploadVideo">Upload</a>
+                                </li>
+                </ul>
+            </div>
+            <%if(showingLatest){%>
+                <h2>See Latest!</h2>
+                <%}else{%>
+                    <h2>See Trending!</h2>
+                    <%}%>
+                        <a href="/upload" class="btn-btn-primary"></a>
+                        <div class="row">
+                            <%Videos.forEach(function(video){%>
+                                <div class="col">
+                                    <div class="card">
+                                        <video height="240" controls>
+                                        <source src="/<%=video.VideoFilePath%>" type="video/mp4">
+                                    </video>
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <%=video.VideoTitle%>
+                                            </h5>
+                                            <h7><i class="fa fa-map-marker" aria-hidden="true"></i>
+                                                <%=video.VideoLocation%>
+                                            </h7>
+                                            <p>From
+                                                <%=video.author.Username%>
+                                            </p>
+                                            <p class="card-text">
+                                                <%=video.VideoDescription%>
+                                            </p>
+                                            <p>
+                                                <span class="LikesQuantity"><%=video.LikedUsers.length%></span> Likes
+                                            </p>
+                                            <%if(currentUser!==null){%>
+                                                <%if(video.LikedUsers.some(user=>{return(user.Username===currentUser.Username)})){%>
+                                                    <!--Show Unlike by default-->
+                                                    <form class="Unlike" action="/video/<%=video._id%>/unlike?_method=PUT" method="POST" style="display: inline;">
+                                                        <button class="btn btn-outline-warning btn-sm" id="UnlikeButton">Unlike</button>
+                                                    </form>
+                                                    <!--Hide This Like Button only Toggle-->
+                                                    <form class="Like" action="/video/<%=video._id%>/like?_method=PUT" method="POST" style="display: none;">
+                                                        <button class="btn btn-outline-success btn-sm" id="LikeButton">Like</button>
+                                                    </form>
+                                                    <%}else{%>
+                                                        <!--Show Like Here-->
+                                                        <form class="Like" action="/video/<%=video._id%>/like?_method=PUT" method="POST" style="display: inline;">
+                                                            <button class="btn btn-outline-success btn-sm" id="LikeButton">Like</button>
+                                                        </form>
+                                                        <!--Hide Unlike Here only Toggle-->
+                                                        <form class="Unlike" action="/video/<%=video._id%>/unlike?_method=PUT" method="POST" style="display: none;">
+                                                            <button class="btn btn-outline-warning btn-sm" id="UnlikeButton">Unlike</button>
+                                                        </form>
+                                                        <%}%>
+                                                            <%}else{%>
+                                                                <form action="/video/<%=video._id%>/like?_method=PUT" method="POST" style="display: inline;">
+                                                                    <button class="btn btn-outline-success btn-sm" id="LikeButton">Like</button>
+                                                                </form>
+                                                                <%}%>
+                                                                    <%if(currentUser!==null){%>
+                                                                        <%if(currentUser.Username===video.author.Username){%>
+                                                                            <form action="/video/<%=video._id%>?_method=DELETE" method="POST" style="display: inline;">
+                                                                                <button class="btn btn-danger btn-sm">Delete</b>
+                                                            </form>
+                                                        <%}else{%>
+                                                        <form action="/report/<%=video._id%>" method="POST" style="display: inline;">
+                                                            <button class="btn btn-outline-danger btn-sm">Report</b>
+                                                        </form>
+                                                        <%}%>
+                                                    <%}else{%>
+                                                        <form action="/report/<%=video._id%>" method="POST" style="display: inline;">
+                                                            <button class="btn btn-outline-danger btn-sm">Report</b>
+                                                        </form>
+                                                    <%}%>
+                            </div>
+                        </div>
+                    </div>
+                          
+            <%});%>
+            </div>
+            
+        </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+        <!--Submit A form using AJAX-->
+        <script>
+            $(".Like").submit((event) => {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: event.currentTarget.action,
+                    success: function (data) {
+                        event.target.parentNode.querySelector(".LikesQuantity").innerHTML=parseInt(event.target.parentNode.querySelector(".LikesQuantity").innerHTML) + 1;
+                        event.currentTarget.style.display="none";
+                        event.target.parentNode.querySelector(".Unlike").style.display="inline";
+                    }
+                });
+            });
+                $(".Unlike").submit((event) => {
+                    event.preventDefault();
+                    $.ajax({
+                    type: "POST",
+                    url: event.currentTarget.action,
+                    success: function (data) {
+                        event.target.parentNode.querySelector(".LikesQuantity").innerHTML=parseInt(event.target.parentNode.querySelector(".LikesQuantity").innerHTML) - 1;
+                        event.target.parentNode.querySelector(".Like").style.display="inline";
+                        event.currentTarget.style.display="none";
+                    }
+                });
+                });
+        </script>
+        </body>
+
+        </html>
